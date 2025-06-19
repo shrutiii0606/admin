@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {colors} from "@/utils/constants";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,13 +31,13 @@ export default function Login() {
                   borderColor: "#000000", // Hover border
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "#F66C69", // Focus border
+                  borderColor: colors.primary, // Focus border
                 },
               },
               "& .MuiInputLabel-root": {
                 color: "#A6A6A6", // Default label
                 "&.Mui-focused": {
-                  color: "#F66C69", // Focus label
+                  color:colors.primary, // Focus label
                 },
               },
             }}
