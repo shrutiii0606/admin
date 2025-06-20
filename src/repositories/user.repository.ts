@@ -15,6 +15,8 @@ import {
     WorkerSchema,
     CreateWorkerSchema
 } from "@/models/user/user.model";
+import { dbEvents } from "@/events/emitters";
+import { UserEvent, WorkerEvent } from "@/events/events/db.events";
 
 class UserRepository extends BaseRepository<UserProvider> {
     constructor(provider: UserProvider) {
@@ -54,16 +56,19 @@ class UserRepository extends BaseRepository<UserProvider> {
     async create(userData: CreateUser): Promise<UserResponse> {
         const validatedData = CreateUserSchema.parse(userData);
         const user = await this.provider.create(validatedData);
+        dbEvents.emit(UserEvent.created<CreateUser>(userData));
         return UserResponseSchema.parse(user);
     }
 
     async update(userData: UpdateUser): Promise<UserResponse> {
         const validatedData = UpdateUserSchema.parse(userData);
         const user = await this.provider.update(validatedData);
+        dbEvents.emit(UserEvent.updated<UpdateUser>(validatedData));
         return UserResponseSchema.parse(user);
     }
 
     async delete(id: string): Promise<void> {
+        dbEvents.emit(UserEvent.deleted<string>(id));
         await this.provider.delete(id);
     }
 
@@ -115,12 +120,15 @@ class WorkerRepository extends BaseRepository<WorkerProvider> {
     async create(workerData: CreateWorker): Promise<Worker> {
         const validatedData = CreateWorkerSchema.parse(workerData);
         const worker = await this.provider.create(validatedData);
+        dbEvents.emit(WorkerEvent.created<CreateWorker>(validatedData));
         return WorkerSchema.parse(worker);
     }
 
     async update(workerData: Worker): Promise<Worker> {
         const validatedData = WorkerSchema.parse(workerData);
         const worker = await this.provider.update(validatedData);
+        type UpdateWorker = Worker;
+        dbEvents.emit(WorkerEvent.updated<UpdateWorker>(validatedData));
         return WorkerSchema.parse(worker);
     }
 
@@ -130,6 +138,8 @@ class WorkerRepository extends BaseRepository<WorkerProvider> {
 
     async deleteByRetailerAndEmployee(retailerId: string, employeeId: string): Promise<void> {
         await this.provider.deleteByRetailerAndEmployee(retailerId, employeeId);
+        type DeleteWorker = { retailerId: string; employeeId: string };
+        dbEvents.emit(WorkerEvent.deleted<DeleteWorker>({ retailerId, employeeId }));
     }
 }
 

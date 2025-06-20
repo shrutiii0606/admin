@@ -27,6 +27,8 @@ import {
     RetailerOrderWithDetailsSchema,
     OrderStatisticsSchema
 } from "@/models/retailer/retailer.model";
+import { dbEvents } from "@/events/emitters";
+import { RetailerAccountEvent, RetailerOrderEvent, RetailerOrderItemEvent } from "@/events/events/db.events";
 
 class RetailerAccountRepository extends BaseRepository<RetailerAccountProvider> {
     constructor(provider: RetailerAccountProvider) {
@@ -54,26 +56,32 @@ class RetailerAccountRepository extends BaseRepository<RetailerAccountProvider> 
     async create(accountData: CreateRetailerAccount): Promise<RetailerAccount> {
         const validatedData = CreateRetailerAccountSchema.parse(accountData);
         const account = await this.provider.create(validatedData);
+        dbEvents.emit(RetailerAccountEvent.created<CreateRetailerAccount>(accountData));
         return RetailerAccountSchema.parse(account);
     }
 
     async update(accountData: UpdateRetailerAccount): Promise<RetailerAccount> {
         const validatedData = UpdateRetailerAccountSchema.parse(accountData);
         const account = await this.provider.update(validatedData);
+        dbEvents.emit(RetailerAccountEvent.updated<UpdateRetailerAccount>(accountData));
         return RetailerAccountSchema.parse(account);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteRetailerAccount = string;
+        dbEvents.emit(RetailerAccountEvent.deleted<DeleteRetailerAccount>(id));
     }
 
     async addCoins(retailerId: string, coins: number): Promise<RetailerAccount> {
         const account = await this.provider.addCoins(retailerId, coins);
+        dbEvents.emit(RetailerAccountEvent.updated<UpdateRetailerAccount>({ id: retailerId, coins }));
         return RetailerAccountSchema.parse(account);
     }
 
     async deductCoins(retailerId: string, coins: number): Promise<RetailerAccount> {
         const account = await this.provider.deductCoins(retailerId, coins);
+        dbEvents.emit(RetailerAccountEvent.updated<UpdateRetailerAccount>({ id: retailerId, coins: -coins }));
         return RetailerAccountSchema.parse(account);
     }
 }
@@ -134,21 +142,26 @@ class RetailerOrderRepository extends BaseRepository<RetailerOrderProvider> {
     async create(orderData: CreateRetailerOrder): Promise<RetailerOrder> {
         const validatedData = CreateRetailerOrderSchema.parse(orderData);
         const order = await this.provider.create(validatedData);
+        dbEvents.emit(RetailerOrderEvent.created<CreateRetailerOrder>(orderData));
         return RetailerOrderSchema.parse(order);
     }
 
     async update(orderData: UpdateRetailerOrder): Promise<RetailerOrder> {
         const validatedData = UpdateRetailerOrderSchema.parse(orderData);
         const order = await this.provider.update(validatedData);
+        dbEvents.emit(RetailerOrderEvent.updated<UpdateRetailerOrder>(orderData));
         return RetailerOrderSchema.parse(order);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteRetailerOrder = string;
+        dbEvents.emit(RetailerOrderEvent.deleted<DeleteRetailerOrder>(id));
     }
 
     async updateStatus(id: string, status: "pending" | "completed" | "cancelled"): Promise<RetailerOrder> {
         const order = await this.provider.updateStatus(id, status);
+        dbEvents.emit(RetailerOrderEvent.updated<UpdateRetailerOrder>({ id, orderStatus: status }));
         return RetailerOrderSchema.parse(order);
     }
 }
@@ -182,6 +195,7 @@ class RetailerOrderItemRepository extends BaseRepository<RetailerOrderItemProvid
     async create(itemData: CreateRetailerOrderItem): Promise<RetailerOrderItem> {
         const validatedData = CreateRetailerOrderItemSchema.parse(itemData);
         const item = await this.provider.create(validatedData);
+        dbEvents.emit(RetailerOrderItemEvent.created<CreateRetailerOrderItem>(itemData));
         return RetailerOrderItemSchema.parse(item);
     }
 
@@ -194,15 +208,21 @@ class RetailerOrderItemRepository extends BaseRepository<RetailerOrderItemProvid
     async update(itemData: RetailerOrderItem): Promise<RetailerOrderItem> {
         const validatedData = RetailerOrderItemSchema.parse(itemData);
         const item = await this.provider.update(validatedData);
+        type UpdateRetailerOrderItem = RetailerOrderItem;
+        dbEvents.emit(RetailerOrderItemEvent.updated<UpdateRetailerOrderItem>(itemData));
         return RetailerOrderItemSchema.parse(item);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteRetailerOrderItem = string;
+        dbEvents.emit(RetailerOrderItemEvent.deleted<DeleteRetailerOrderItem>(id));
     }
 
     async deleteByOrder(orderId: string): Promise<void> {
         await this.provider.deleteByOrder(orderId);
+        type DeleteRetailerOrderItem = string;
+        dbEvents.emit(RetailerOrderItemEvent.deleted<DeleteRetailerOrderItem>(orderId));
     }
 
     async getOrderTotal(orderId: string): Promise<number> {

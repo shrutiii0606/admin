@@ -52,6 +52,8 @@ import {
     CreateRetailerInventorySchema,
     UpdateRetailerInventorySchema
 } from "@/models/product/product.model";
+import { dbEvents } from "@/events/emitters";
+import { ProductCategoryEvent, ProductColorEvent, ProductDetailEvent, ProductEvent, ProductImageEvent, ProductSizeEvent, RetailerInventoryEvent } from "@/events/events/db.events";
 
 class ProductDetailsRepository extends BaseRepository<ProductDetailsProvider> {
     constructor(provider: ProductDetailsProvider) {
@@ -71,17 +73,22 @@ class ProductDetailsRepository extends BaseRepository<ProductDetailsProvider> {
     async create(detailsData: CreateProductDetails): Promise<ProductDetails> {
         const validatedData = CreateProductDetailsSchema.parse(detailsData);
         const details = await this.provider.create(validatedData);
+        dbEvents.emit(ProductDetailEvent.created<CreateProductDetails>(validatedData));
         return ProductDetailsSchema.parse(details);
     }
 
     async update(detailsData: ProductDetails): Promise<ProductDetails> {
         const validatedData = ProductDetailsSchema.parse(detailsData);
         const details = await this.provider.update(validatedData);
+        type UpdateProductDetails = ProductDetails;
+        dbEvents.emit(ProductDetailEvent.updated<UpdateProductDetails>(validatedData));
         return ProductDetailsSchema.parse(details);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProductDetails = string;
+        dbEvents.emit(ProductDetailEvent.deleted<DeleteProductDetails>(id));
     }
 }
 
@@ -123,17 +130,21 @@ class ProductRepository extends BaseRepository<ProductProvider> {
     async create(productData: CreateProduct): Promise<Product> {
         const validatedData = CreateProductSchema.parse(productData);
         const product = await this.provider.create(validatedData);
+        dbEvents.emit(ProductEvent.created<CreateProduct>(validatedData));
         return ProductSchema.parse(product);
     }
 
     async update(productData: UpdateProduct): Promise<Product> {
         const validatedData = UpdateProductSchema.parse(productData);
         const product = await this.provider.update(validatedData);
+        dbEvents.emit(ProductEvent.updated<UpdateProduct>(validatedData));
         return ProductSchema.parse(product);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProduct = string;
+        dbEvents.emit(ProductEvent.deleted<DeleteProduct>(id));
     }
 }
 
@@ -155,17 +166,21 @@ class ProductCategoryRepository extends BaseRepository<ProductCategoryProvider> 
     async create(categoryData: CreateProductCategory): Promise<ProductCategory> {
         const validatedData = CreateProductCategorySchema.parse(categoryData);
         const category = await this.provider.create(validatedData);
+        dbEvents.emit(ProductCategoryEvent.created<CreateProductCategory>(validatedData));
         return ProductCategorySchema.parse(category);
     }
 
     async update(categoryData: ProductCategory): Promise<ProductCategory> {
         const validatedData = ProductCategorySchema.parse(categoryData);
         const category = await this.provider.update(validatedData);
+        dbEvents.emit(ProductCategoryEvent.updated<ProductCategory>(validatedData));
         return ProductCategorySchema.parse(category);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProductCategory = string;
+        dbEvents.emit(ProductCategoryEvent.deleted<DeleteProductCategory>(id));
     }
 }
 
@@ -192,17 +207,22 @@ class ProductImageRepository extends BaseRepository<ProductImageProvider> {
     async create(imageData: CreateProductImage): Promise<ProductImage> {
         const validatedData = CreateProductImageSchema.parse(imageData);
         const image = await this.provider.create(validatedData);
+        dbEvents.emit(ProductImageEvent.created<CreateProductImage>(validatedData));
         return ProductImageSchema.parse(image);
     }
 
     async update(imageData: ProductImage): Promise<ProductImage> {
         const validatedData = ProductImageSchema.parse(imageData);
         const image = await this.provider.update(validatedData);
+        type UpdateProductImage = ProductImage;
+        dbEvents.emit(ProductImageEvent.updated<UpdateProductImage>(validatedData));
         return ProductImageSchema.parse(image);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProductImage = string;
+        dbEvents.emit(ProductImageEvent.deleted<DeleteProductImage>(id));
     }
 }
 
@@ -224,17 +244,22 @@ class ProductColorRepository extends BaseRepository<ProductColorProvider> {
     async create(colorData: CreateProductColor): Promise<ProductColor> {
         const validatedData = CreateProductColorSchema.parse(colorData);
         const color = await this.provider.create(validatedData);
+        dbEvents.emit(ProductColorEvent.created<CreateProductColor>(validatedData));
         return ProductColorSchema.parse(color);
     }
 
     async update(colorData: ProductColor): Promise<ProductColor> {
         const validatedData = ProductColorSchema.parse(colorData);
         const color = await this.provider.update(validatedData);
+        type UpdateProductColor = ProductColor;
+        dbEvents.emit(ProductColorEvent.updated<UpdateProductColor>(validatedData));
         return ProductColorSchema.parse(color);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProductColor = string;
+        dbEvents.emit(ProductColorEvent.deleted<DeleteProductColor>(id));
     }
 }
 
@@ -256,17 +281,22 @@ class ProductSizeRepository extends BaseRepository<ProductSizeProvider> {
     async create(sizeData: CreateProductSize): Promise<ProductSize> {
         const validatedData = CreateProductSizeSchema.parse(sizeData);
         const size = await this.provider.create(validatedData);
+        dbEvents.emit(ProductSizeEvent.created<CreateProductSize>(validatedData));
         return ProductSizeSchema.parse(size);
     }
 
     async update(sizeData: ProductSize): Promise<ProductSize> {
         const validatedData = ProductSizeSchema.parse(sizeData);
         const size = await this.provider.update(validatedData);
+        type UpdateProductSize = ProductSize;
+        dbEvents.emit(ProductSizeEvent.updated<UpdateProductSize>(validatedData));
         return ProductSizeSchema.parse(size);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteProductSize = string;
+        dbEvents.emit(ProductSizeEvent.deleted<DeleteProductSize>(id));
     }
 }
 
@@ -275,7 +305,7 @@ class AdminInventoryRepository extends BaseRepository<AdminInventoryProvider> {
         super(provider);
     }
 
-    async getAll(): Promise<any[]> {
+    async getAll(): Promise<(AdminInventory & { product: any })[]> {
         const inventories = await this.provider.getAll();
         return inventories.map(inventory => ({
             ...AdminInventorySchema.parse(inventory),
@@ -293,7 +323,7 @@ class AdminInventoryRepository extends BaseRepository<AdminInventoryProvider> {
         return inventory ? AdminInventorySchema.parse(inventory) : null;
     }
 
-    async getLowStock(threshold?: number): Promise<any[]> {
+    async getLowStock(threshold?: number): Promise<(AdminInventory & { product: any })[]> {
         const inventories = await this.provider.getLowStock(threshold);
         return inventories.map(inventory => ({
             ...AdminInventorySchema.parse(inventory),
@@ -304,21 +334,26 @@ class AdminInventoryRepository extends BaseRepository<AdminInventoryProvider> {
     async create(inventoryData: CreateAdminInventory): Promise<AdminInventory> {
         const validatedData = CreateAdminInventorySchema.parse(inventoryData);
         const inventory = await this.provider.create(validatedData);
+        dbEvents.emit(ProductEvent.created<CreateAdminInventory>(validatedData));
         return AdminInventorySchema.parse(inventory);
     }
 
     async update(inventoryData: UpdateAdminInventory): Promise<AdminInventory> {
         const validatedData = UpdateAdminInventorySchema.parse(inventoryData);
         const inventory = await this.provider.update(validatedData);
+        dbEvents.emit(ProductEvent.updated<UpdateAdminInventory>(validatedData));
         return AdminInventorySchema.parse(inventory);
     }
 
     async delete(id: string): Promise<void> {
         await this.provider.delete(id);
+        type DeleteAdminInventory = string;
+        dbEvents.emit(ProductEvent.deleted<DeleteAdminInventory>(id));
     }
 
     async updateQuantity(productId: string, quantity: number): Promise<AdminInventory> {
         const inventory = await this.provider.updateQuantity(productId, quantity);
+        dbEvents.emit(ProductEvent.updated<UpdateAdminInventory>({ id: productId, quantity }));
         return AdminInventorySchema.parse(inventory);
     }
 }
@@ -328,7 +363,7 @@ class RetailerInventoryRepository extends BaseRepository<RetailerInventoryProvid
         super(provider);
     }
 
-    async getAll(): Promise<any[]> {
+    async getAll(): Promise<(RetailerInventory & { product: any })[]> {
         const inventories = await this.provider.getAll();
         return inventories.map(inventory => ({
             ...RetailerInventorySchema.parse(inventory),
@@ -356,12 +391,14 @@ class RetailerInventoryRepository extends BaseRepository<RetailerInventoryProvid
     async create(inventoryData: CreateRetailerInventory): Promise<RetailerInventory> {
         const validatedData = CreateRetailerInventorySchema.parse(inventoryData);
         const inventory = await this.provider.create(validatedData);
+        dbEvents.emit(RetailerInventoryEvent.created<CreateRetailerInventory>(validatedData));
         return RetailerInventorySchema.parse(inventory);
     }
 
     async update(inventoryData: UpdateRetailerInventory): Promise<RetailerInventory> {
         const validatedData = UpdateRetailerInventorySchema.parse(inventoryData);
         const inventory = await this.provider.update(validatedData);
+        dbEvents.emit(RetailerInventoryEvent.updated<UpdateRetailerInventory>(validatedData));
         return RetailerInventorySchema.parse(inventory);
     }
 
@@ -371,6 +408,8 @@ class RetailerInventoryRepository extends BaseRepository<RetailerInventoryProvid
 
     async deleteByRetailerAndProduct(retailerId: string, productId: string): Promise<void> {
         await this.provider.deleteByRetailerAndProduct(retailerId, productId);
+        type DeleteRetailerInventory = { retailerId: string; productId: string };
+        dbEvents.emit(RetailerInventoryEvent.deleted<DeleteRetailerInventory>({ retailerId, productId }));
     }
 }
 

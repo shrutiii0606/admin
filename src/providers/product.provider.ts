@@ -12,7 +12,7 @@ import {
     adminInventory,
     retailerInventories
 } from "@/db/schema";
-import { eq, ilike, desc, and } from "drizzle-orm";
+import { eq, ilike, desc, and, lte } from "drizzle-orm";
 
 export class ProductDetailsProvider extends BaseProvider {
     async getAll(): Promise<any[]> {
@@ -297,7 +297,7 @@ export class AdminInventoryProvider extends BaseProvider {
             })
             .from(adminInventory)
             .innerJoin(products, eq(adminInventory.productId, products.id))
-            .where(eq(adminInventory.quantity, threshold));
+            .where(lte(adminInventory.quantity, threshold));
     }
 
     async create(object: any): Promise<any> {
