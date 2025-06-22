@@ -10,6 +10,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import List from '@mui/material/List';
 import PeopleIcon from "@mui/icons-material/People";
 import Link from 'next/link';
+import RetailersTable from "@/components/RetailersTable";
+import StorefrontIcon from '@mui/icons-material/Storefront';
 
 
 const drawerWidth = 350;
@@ -44,12 +46,15 @@ const DrawerHeader = styled('div')(({theme}) => ({
 }));
 
 const menuItems = [
-    {label: "Retailer", icon: <PeopleIcon/>, path: "/retailer" },
+    { label: "Retailers", icon: <PeopleIcon />, key: "retailers" },
+    {label:"Products", icon: <StorefrontIcon />, key: "products" },
+    // You can add more items here: employees, reports, etc.
 ];
 
 
 export default function Home() {
     const [open, setOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState("retailers");
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -59,13 +64,25 @@ export default function Home() {
         setOpen(false);
     };
 
+    const renderContent = () => {
+        switch (activeTab) {
+            case "retailers":
+                return <RetailersTable/>;
+            // case "employees":
+            //   return <EmployeesTable />;
+            default:
+                return <Typography variant="body1">Select a tab</Typography>;
+        }
+    };
+
+
     return (
-        <Box sx={{display: 'flex'}}>
+      <>
             <CssBaseline/>
             <AppBar position='fixed' open={open}
                     elevation={0}
                     sx={{
-                        backgroundColor: colors.primary,
+                        backgroundColor:colors.primary,
                         height: 90,
                         color: colors.white,
                         display: "flex",
@@ -88,10 +105,10 @@ export default function Home() {
                         <MenuIcon/>
                     </IconButton>
                     <Typography
-                        variant="h6"
+                        variant="h4"
                         noWrap
                         component="div"
-                        className={`${open ? "text-left" : "text-center"} flex-grow text-[32px] font-normal`}
+                        className={`${open ? "text-left" : "text-center"} flex-grow text-[40px] font-bold`}
                     >
                         Dashboard</Typography>
                 </Toolbar>
@@ -99,11 +116,13 @@ export default function Home() {
             </AppBar>
             <Drawer
                 sx={{
-                    flexShrink: 0,
                     width: drawerWidth,
+                    flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
+                        position: 'fixed', // ✅ keeps it from affecting layout
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
                     },
                 }}
                 variant="persistent"
@@ -125,28 +144,50 @@ export default function Home() {
                     </div>
                 </DrawerHeader>
                 <div className="h-10"/>
-                <List className="px-4">
-                    {menuItems.map((item, index) => (
-                        <Link
-                            key={index}
-                            href={item.path}
-                            className="hover:bg-gray-100 cursor-pointer block p-4"
-                            style={{
-                                borderTop: `1px solid ${colors.borderDefault}`,
-                                borderBottom: `1px solid ${colors.borderDefault}`,
-                                color: colors.black,
-                                textDecoration: 'none',
+                <List>
+                    {menuItems.map((item) => (
+                        <Box
+                            key={item.key}
+                            onClick={() => setActiveTab(item.key)}
+                            sx={{
+                                p: 2,
+                                cursor: 'pointer',
+                                borderBottom: `1px solid ${colors.borderDefault}`, // border on every item
+                                backgroundColor: activeTab === item.key ? "#f5f5f5" : "transparent",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 2,
+                                borderRadius: 0,
+                                '&:hover': {
+                                    backgroundColor: '#eaeaea',
+                                }
                             }}
                         >
-                            <div className="flex items-center gap-4">
-                                <div style={{ color: colors.black }}>{item.icon}</div>
-                                <span style={{ fontWeight: 'normal', fontSize: '1rem' }}>{item.label}</span>
-                            </div>
-                        </Link>
+                            {item.icon}
+                            <Typography>{item.label}</Typography>
+                        </Box>
                     ))}
                 </List>
 
+
+
+
             </Drawer>
-        </Box>
+
+        {/*    Main  Component   */}
+            <Box
+                component="main"
+                sx={{
+                    flexGrow: 1,
+                    p: 4,
+                    mt: 11,
+                    minHeight: '100vh',
+                    transition: 'margin 0.5s ease',
+                    ...(open && { marginLeft: `${drawerWidth}px` }), // ✅ Fix: apply margin only when drawer is open
+                }}
+            >
+                {renderContent()}
+            </Box>
+    </>
     );
 }
