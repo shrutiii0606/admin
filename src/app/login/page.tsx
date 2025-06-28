@@ -48,7 +48,7 @@ export default function Login() {
             label="Password"
             type={showPassword ? "text" : "password"}
             variant="outlined"
-             sx={{
+            sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "10px",
                 "& fieldset": {
