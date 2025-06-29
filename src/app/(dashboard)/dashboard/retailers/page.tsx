@@ -19,8 +19,6 @@ export default function Retailers() {
                 { label: 'Email', key: 'email' },
                 { label: 'City', key: 'city' },
             ]}
-            buttonLabel="Add Retailer"
-            onButtonClick={() => alert("Add Retailer Clicked")}
         />
     );
 }
