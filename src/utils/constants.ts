@@ -24,6 +24,7 @@ export const menuItems: {
 }[] = [
     { label: 'Retailers', icon: PeopleIcon, key: 'retailers', route: '/dashboard/retailers' },
     { label: 'Products', icon: StorefrontIcon, key: 'products', route: '/dashboard/products' },
-    {label: 'Users', icon: PeopleIcon, key: 'users', route: '/dashboard/users' }
+    {label: 'Users', icon: PeopleIcon, key: 'users', route: '/dashboard/users' },
+    {label: 'Attendance', icon: PeopleIcon, key: 'attendance', route: '/dashboard/attendance' },
 
 ];
