@@ -53,24 +53,15 @@ export default function Attendance() {
     }));
 
     return (
-        <Box sx={{ px: 4, py: 6, bgcolor: '#f9fafb', minHeight: '100vh' }}>
+        <Box>
             {/* Header */}
             <Paper elevation={1} sx={{
-                p: 4,
-                mb: 6,
+                p: 3,
+                mb: 4,
                 borderRadius: 4,
                 backgroundColor: '#ffffff',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
             }}>
-                <Typography variant="h5" fontWeight="bold" color="primary.main">
-                    Attendance Dashboard
-                </Typography>
-
-                <Divider />
-
                 <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     alignItems="center"

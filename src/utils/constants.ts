@@ -21,10 +21,11 @@ export const menuItems: {
     icon: SvgIconComponent;
     key: string;
     route: string;
+    color: string;
 }[] = [
-    { label: 'Retailers', icon: PeopleIcon, key: 'retailers', route: '/dashboard/retailers' },
-    { label: 'Products', icon: StorefrontIcon, key: 'products', route: '/dashboard/products' },
-    {label: 'Users', icon: PeopleIcon, key: 'users', route: '/dashboard/users' },
-    {label: 'Attendance', icon: PeopleIcon, key: 'attendance', route: '/dashboard/attendance' },
+    { label: 'Retailers', icon: PeopleIcon, key: 'retailers', route: '/dashboard/retailers',color: '#1976d2'  },
+    { label: 'Products', icon: StorefrontIcon, key: 'products', route: '/dashboard/products' ,color: '#388e3c' },
+    {label: 'Users', icon: PeopleIcon, key: 'users', route: '/dashboard/users' ,color: '#f57c00'},
+    {label: 'Attendance', icon: PeopleIcon, key: 'attendance', route: '/dashboard/attendance',color: '#d32f2f'  },
 
 ];

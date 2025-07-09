@@ -147,11 +147,11 @@ export default function TableComponent<T>({
                             fontWeight: 600,
                             textTransform: 'none',
                             minWidth: { xs: '100%', sm: 'auto' },
-                            backgroundColor: '#3b82f6',
+                            backgroundColor:'#A89F91',
                             boxShadow: '0 2px 4px rgba(59, 130, 246, 0.2)',
                             transition: 'all 0.2s ease-in-out',
                             '&:hover': {
-                                backgroundColor: '#2563eb',
+                                backgroundColor: '#8E867A',
                                 boxShadow: '0 3px 6px rgba(59, 130, 246, 0.25)',
                                 transform: 'translateY(-1px)',
                             },

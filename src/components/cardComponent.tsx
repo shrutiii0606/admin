@@ -7,19 +7,20 @@ import {
     alpha,
 } from '@mui/material';
 import { ReactNode } from 'react';
+import {colors} from "@/utils/constants";
 
 interface CardComponentProps {
     title: string;
     icon?: ReactNode;
     onClick: () => void;
-
+    color: string;
 }
 
 export default function CardComponent({
                                           title,
                                           icon,
                                           onClick,
-
+                                          color
                                       }: CardComponentProps) {
     const theme = useTheme();
 
@@ -72,8 +73,8 @@ export default function CardComponent({
                         fontSize: 28,
                         mb: 2,
                         transition: 'transform 0.3s ease',
-                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                        color: theme.palette.primary.main,
+                        backgroundColor: alpha(color, 0.6),
+                        color: colors.white,
                     }}
                 >
                     {icon}

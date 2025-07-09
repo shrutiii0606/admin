@@ -27,6 +27,7 @@ export default function Dashboard() {
                         key={item.key}
                         title={item.label}
                         icon={<item.icon />}
+                        color={item.color}
                         onClick={() => router.push(item.route)}
                     />
                 ))}
