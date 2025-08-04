@@ -9,7 +9,6 @@ import {
     TextField,
     Paper,
     Stack,
-    Divider,
     Chip
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -102,7 +101,7 @@ export default function Attendance() {
             {/* Attendance Table */}
             <TableComponent
                 title={`Attendance on ${format(selectedDate, 'dd MMM yyyy')}`}
-                data={mockAttendanceData}
+                data={formattedData}
                 searchKeys={['name', 'status']}
                 columns={[
                     { label: 'Employee Name', key: 'name' },

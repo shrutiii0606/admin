@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
+import Image from 'next/image';
 import {
     CssBaseline,
     Drawer,
@@ -116,10 +117,12 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
                 <DrawerHeader className="flex w-full">
                     <div className="flex justify-between items-center w-full mt-5">
                         <div className="cursor-pointer pl-4 h-[35px]">
-                            <img
+                            <Image
                                 src="/logo.png"
                                 alt="no image"
-                                className="h-[35px] w-[200px] mr-10 object-cover"
+                                width={200}
+                                height={35}
+                                className="mr-10 object-cover"
                             />
                         </div>
                         <IconButton onClick={handleDrawerClose} disableRipple>

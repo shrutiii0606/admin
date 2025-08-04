@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { TextField } from "@/components/textfield";
 import { Button } from "@/components/button";
-import { Checkbox, FormControlLabel, Typography, Box } from "@mui/material";
+import { Checkbox, FormControlLabel } from "@mui/material";
 import { CreateProduct, CreateProductDetails } from "@/models/product/product.model";
 
 interface FormData extends Omit<CreateProduct, 'details'> {

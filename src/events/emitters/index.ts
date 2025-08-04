@@ -7,14 +7,11 @@ class DbEventEmitter {
         this.emitter = new EventEmitter();
     }
 
-    emit(event: DbEvent<any>) {
-        this.emitter.emit(`${typeof event}.${typeof event.payload}`, event.payload);
+    emit<T>(event: DbEvent<T>) {
+        this.emitter.emit(event.constructor.name, event.payload);
     }
 
-    on(
-        name: string,
-        listener: (payload: any) => void
-    ) {
+    on<T>(name: string, listener: (payload: T) => void) {
         console.log(Date.now(), " Started listening on channel: ", name);
         this.emitter.on(name, listener);
     }
@@ -26,14 +23,11 @@ class ServiceEventEmitter {
         this.emitter = new EventEmitter();
     }
 
-    emit(event: ServiceEvent<any>) {
-        this.emitter.emit(`${typeof event}.${typeof event.payload}`, event.payload);
+    emit<T>(event: ServiceEvent<T>) {
+        this.emitter.emit(event.constructor.name, event.payload);
     }
 
-    on(
-        name: string,
-        listener: (payload: any) => void
-    ) {
+    on<T>(name: string, listener: (payload: T) => void) {
         console.log(Date.now(), " Started listening on channel: ", name);
         this.emitter.on(name, listener);
     }
